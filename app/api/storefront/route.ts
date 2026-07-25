@@ -13,7 +13,7 @@ export async function POST() {
   const html = await qwenChat([
     {
       role: "system",
-      content: `You generate ONE self-contained bilingual (Japanese + English) HTML shop storefront page from a JSON shop codex. Output ONLY raw HTML (a full <html> document with inline <style>, no external resources, no markdown fences). Show the shop name, story, owner greeting, and a product list with JA name, EN gloss, and price in yen. Keep it simple, warm, readable. Use serif headings for Japanese text.`,
+      content: `You generate ONE self-contained, single-file bilingual (Japanese + English) HTML shop storefront page from a JSON shop codex. Output ONLY raw HTML (a full <html> document with inline <style>, no external resources, no markdown fences). Design tokens to follow exactly: page background ink #1C1B18, content panels washi #EDE6D6 (dark ink text on washi), indigo #23395B for accents/borders/dividers, no gradients, no purple, no glassmorphism. Headings: a serif "mincho" font stack (e.g. "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif) with generous letter-spacing for large Japanese characters; body text a clean Japanese-capable sans-serif (e.g. "Noto Sans JP", sans-serif). Show the shop name, story, owner greeting, and a product list with JA name and EN gloss displayed SIDE BY SIDE (JA prominent, EN as a smaller subtitle beside or beneath each), plus price in yen. Use generous spacing/padding between sections. The overall feel should be solemn and crafted, like aged washi paper and sumi ink — not a generic SaaS page.`,
     },
     { role: "user", content: JSON.stringify(codex) },
   ]);

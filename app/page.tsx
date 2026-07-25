@@ -161,9 +161,7 @@ export default function Home() {
   return (
     <main className="app-shell">
       <div className="badges-row">
-        {badges?.processedBy === "aiand" && (
-          <span className="badge badge-green">処理は日本国内 processed in Japan</span>
-        )}
+        {badges?.processedBy === "aiand" && <span className="badge badge-hanko">日本国内</span>}
         {badges?.processedBy === "qwen-fallback" && (
           <span className="badge badge-amber">fallback: Qwen</span>
         )}
@@ -172,7 +170,10 @@ export default function Home() {
 
       <div className="columns">
         <section className="panel panel-left">
-          <h2 className="jp-heading">相続 Inheritance</h2>
+          <h2 className="jp-heading">
+            <span className="heading-ja">相続</span>
+            <span className="heading-en">Inheritance</span>
+          </h2>
 
           <div className="field-group">
             <label className="field-label">音声ファイル — audio file</label>
@@ -229,7 +230,10 @@ export default function Home() {
         </section>
 
         <section className="panel panel-mid">
-          <h2 className="jp-heading">跡継ぎ The Heirs</h2>
+          <h2 className="jp-heading">
+            <span className="heading-ja">跡継ぎ</span>
+            <span className="heading-en">The Heirs</span>
+          </h2>
           <button onClick={buildStorefront} disabled={storefrontLoading} className="btn-primary">
             {storefrontLoading ? "生成中… building…" : "店を作る — Build Storefront"}
           </button>
@@ -247,7 +251,10 @@ export default function Home() {
         </section>
 
         <section className="panel panel-right">
-          <h2 className="jp-heading">店は生きる The Shop Lives</h2>
+          <h2 className="jp-heading">
+            <span className="heading-ja">店は生きる</span>
+            <span className="heading-en">The Shop Lives</span>
+          </h2>
 
           <div className="mode-toggle">
             <button
