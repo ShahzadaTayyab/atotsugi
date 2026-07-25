@@ -1,17 +1,10 @@
 import type { Msg } from "@/lib/types";
+import { stripJsonFences } from "@/lib/json";
 
 const BASE_URL =
   process.env.QWEN_BASE_URL ||
   "https://dashscope-intl.aliyuncs.com/compatible-mode/v1";
 const MODEL = process.env.QWEN_MODEL || "qwen-plus";
-
-function stripJsonFences(text: string): string {
-  return text
-    .trim()
-    .replace(/^```(?:json)?\s*/i, "")
-    .replace(/```\s*$/i, "")
-    .trim();
-}
 
 export async function qwenChat(messages: Msg[], json = false): Promise<string> {
   const apiKey = process.env.QWEN_API_KEY;

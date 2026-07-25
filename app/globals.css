@@ -1,0 +1,197 @@
+:root {
+  --ink: #1c1b18;
+  --washi: #ede6d6;
+  --indigo: #23395b;
+  --hanko: #b3341f;
+  --kin: #b8963e;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  background: var(--ink);
+  color: var(--washi);
+}
+
+body {
+  font-family: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+.jp-heading {
+  font-family: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  letter-spacing: 0.08em;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+textarea,
+input {
+  font-family: inherit;
+}
+
+.app-shell {
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.badges-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  font-size: 0.8rem;
+  padding: 6px 12px;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
+}
+
+.badge-green {
+  background: #1f4d2c;
+  color: #d7f7dd;
+}
+
+.badge-amber {
+  background: var(--kin);
+  color: var(--ink);
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  border-radius: 6px;
+  padding: 20px;
+  min-height: 400px;
+}
+
+.panel-left {
+  background: var(--washi);
+  color: var(--ink);
+}
+
+.panel-mid {
+  background: var(--indigo);
+  color: var(--washi);
+}
+
+.panel-right {
+  background: var(--washi);
+  color: var(--ink);
+}
+
+.field-group {
+  margin: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+textarea {
+  background: #fff;
+  border: 1px solid #c9bfa5;
+  border-radius: 4px;
+  padding: 8px;
+  color: var(--ink);
+  resize: vertical;
+}
+
+.btn-primary {
+  background: var(--indigo);
+  color: var(--washi);
+  border: none;
+  border-radius: 4px;
+  padding: 10px 18px;
+  font-size: 0.95rem;
+  margin-top: 4px;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error-text {
+  color: var(--hanko);
+  font-size: 0.85rem;
+}
+
+.empty-state {
+  opacity: 0.65;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.transcript-feed {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+  font-size: 0.85rem;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.transcript-feed li {
+  padding: 6px 0;
+  border-bottom: 1px solid #d9cfb4;
+}
+
+.transcript-tag {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--indigo);
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.codex-tree {
+  font-size: 0.85rem;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.codex-list {
+  list-style: none;
+  padding-left: 14px;
+  margin: 4px 0;
+}
+
+.codex-key {
+  font-weight: 600;
+  color: var(--indigo);
+}
+
+.codex-val {
+  opacity: 0.9;
+}
+
+.codex-empty {
+  opacity: 0.5;
+}

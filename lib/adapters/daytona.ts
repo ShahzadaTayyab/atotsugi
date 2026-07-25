@@ -1,4 +1,9 @@
-import { Daytona, type Sandbox } from "@daytonaio/sdk";
+import {
+  Daytona,
+  DaytonaConflictError,
+  DaytonaNotFoundError,
+  type Sandbox,
+} from "@daytonaio/sdk";
 
 export let STATE_FALLBACK = false;
 
@@ -31,6 +36,16 @@ export async function createSandbox(label: string): Promise<string> {
     await sandbox.waitUntilStarted(60);
     return sandbox.id;
   } catch (err) {
+    if (err instanceof DaytonaConflictError) {
+      try {
+        const existing = await getClient().get(label);
+        await existing.waitUntilStarted(60);
+        return existing.id;
+      } catch (getErr) {
+        console.warn(`Daytona: failed to reuse existing sandbox "${label}", falling back to memory:`, getErr);
+        return fallbackToMemory(label);
+      }
+    }
     console.warn(`Daytona createSandbox failed for "${label}", falling back to memory:`, err);
     return fallbackToMemory(label);
   }
@@ -64,6 +79,9 @@ export async function readSandboxFile(id: string, path: string): Promise<string>
     const buf = await sandbox.fs.downloadFile(path);
     return buf.toString("utf-8");
   } catch (err) {
+    if (err instanceof DaytonaNotFoundError) {
+      return "";
+    }
     console.warn(`Daytona readSandboxFile failed for "${id}:${path}", falling back to memory:`, err);
     STATE_FALLBACK = true;
     return memoryFiles.get(`${id}:${path}`) ?? "";

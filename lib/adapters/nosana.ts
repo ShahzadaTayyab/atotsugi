@@ -1,6 +1,6 @@
 import { gmiChat } from "@/lib/adapters/gmi";
 
-async function transcribeViaNosana(buf: Buffer, filename: string): Promise<string> {
+export async function transcribeViaNosana(buf: Buffer, filename: string): Promise<string> {
   const url = process.env.NOSANA_WHISPER_URL;
   if (!url) throw new Error("NOSANA_WHISPER_URL is not configured");
 

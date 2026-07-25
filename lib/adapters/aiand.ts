@@ -1,4 +1,7 @@
 import type { Msg } from "@/lib/types";
+import { stripJsonFences } from "@/lib/json";
+
+const MODEL = process.env.AIAND_MODEL || "qwen/qwen3.6-27b";
 
 export class NotConfigured extends Error {
   constructor() {
@@ -12,13 +15,13 @@ export async function aiandChat(messages: Msg[]): Promise<string> {
   const apiKey = process.env.AIAND_API_KEY;
   if (!baseUrl || !apiKey) throw new NotConfigured();
 
-  const res = await fetch(`${baseUrl}/chat/completions`, {
+  const res = await fetch(`${baseUrl}/v1/chat/completions`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ messages }),
+    body: JSON.stringify({ model: MODEL, messages }),
   });
 
   if (!res.ok) {
@@ -27,5 +30,6 @@ export async function aiandChat(messages: Msg[]): Promise<string> {
   }
 
   const data = await res.json();
-  return data.choices?.[0]?.message?.content ?? "";
+  const content: string = data.choices?.[0]?.message?.content ?? "";
+  return stripJsonFences(content);
 }

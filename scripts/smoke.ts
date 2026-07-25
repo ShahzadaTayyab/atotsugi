@@ -38,7 +38,7 @@ async function main() {
   const { qwenChat } = await import("../lib/adapters/qwen");
   const { gmiChat, gmiVision } = await import("../lib/adapters/gmi");
   const { aiandChat } = await import("../lib/adapters/aiand");
-  const { transcribeAudio } = await import("../lib/adapters/nosana");
+  const { transcribeViaNosana } = await import("../lib/adapters/nosana");
   const { createSandbox, writeSandboxFile, readSandboxFile, execInSandbox, STATE_FALLBACK } =
     await import("../lib/adapters/daytona");
 
@@ -83,8 +83,7 @@ async function main() {
       throw new Error("NOSANA_WHISPER_URL not set — Whisper GPU job not deployed yet");
     }
     const buf = Buffer.from("fake audio bytes");
-    const text = await transcribeAudio(buf, "smoke.wav");
-    if (text.startsWith("[transcription failed")) throw new Error(text);
+    const text = await transcribeViaNosana(buf, "smoke.wav");
     return `transcribed: "${text.trim()}"`;
   });
 
