@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { ShopCodex } from "@/lib/codex";
 import { emptyCodex } from "@/lib/codex";
+import type { LedgerEntry } from "@/lib/ledger";
 
 type TranscriptEntry = {
   transcript: string;
@@ -14,6 +15,12 @@ type IngestResponse = {
   transcript: string;
   processedBy: "aiand" | "qwen-fallback";
   stateFallback: boolean;
+  error?: string;
+};
+
+type ChatResponse = {
+  reply: string;
+  ledger: LedgerEntry[];
   error?: string;
 };
 
@@ -102,6 +109,55 @@ export default function Home() {
   const isCodexEmpty =
     !codex.shop.name && codex.products.length === 0 && codex.methods.length === 0;
 
+  const [storefrontLoading, setStorefrontLoading] = useState(false);
+  const [storefrontError, setStorefrontError] = useState<string | null>(null);
+  const [storefrontReady, setStorefrontReady] = useState(false);
+
+  async function buildStorefront() {
+    setStorefrontError(null);
+    setStorefrontLoading(true);
+    try {
+      const res = await fetch("/api/storefront", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Storefront build failed.");
+      setStorefrontReady(true);
+    } catch (err) {
+      setStorefrontError((err as Error).message);
+    } finally {
+      setStorefrontLoading(false);
+    }
+  }
+
+  const [chatMode, setChatMode] = useState<"customer" | "successor">("customer");
+  const [chatInput, setChatInput] = useState("");
+  const [chatLog, setChatLog] = useState<{ mode: string; message: string; reply: string }[]>([]);
+  const [chatLoading, setChatLoading] = useState(false);
+  const [chatError, setChatError] = useState<string | null>(null);
+  const [ledger, setLedger] = useState<LedgerEntry[]>([]);
+
+  async function sendChat() {
+    if (!chatInput.trim()) return;
+    setChatError(null);
+    setChatLoading(true);
+    const message = chatInput.trim();
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message, mode: chatMode }),
+      });
+      const data: ChatResponse = await res.json();
+      if (!res.ok) throw new Error(data.error || "Chat failed.");
+      setChatLog((prev) => [...prev, { mode: chatMode, message, reply: data.reply }]);
+      setLedger(data.ledger);
+      setChatInput("");
+    } catch (err) {
+      setChatError((err as Error).message);
+    } finally {
+      setChatLoading(false);
+    }
+  }
+
   return (
     <main className="app-shell">
       <div className="badges-row">
@@ -174,12 +230,92 @@ export default function Home() {
 
         <section className="panel panel-mid">
           <h2 className="jp-heading">跡継ぎ The Heirs</h2>
-          <p className="empty-state">Heir sandboxes boot in the next step.</p>
+          <button onClick={buildStorefront} disabled={storefrontLoading} className="btn-primary">
+            {storefrontLoading ? "生成中… building…" : "店を作る — Build Storefront"}
+          </button>
+          {storefrontError && <p className="error-text">{storefrontError}</p>}
+          {storefrontReady && (
+            <p>
+              <a href="/shop" target="_blank" rel="noreferrer" className="shop-link">
+                /shop を開く — open the shop →
+              </a>
+            </p>
+          )}
+          {isCodexEmpty && (
+            <p className="empty-state">codexを先に作成してください — build the codex first (left).</p>
+          )}
         </section>
 
         <section className="panel panel-right">
           <h2 className="jp-heading">店は生きる The Shop Lives</h2>
-          <p className="empty-state">Customer and successor chat arrive in a later step.</p>
+
+          <div className="mode-toggle">
+            <button
+              className={chatMode === "customer" ? "mode-btn mode-active" : "mode-btn"}
+              onClick={() => setChatMode("customer")}
+            >
+              客 Customer
+            </button>
+            <button
+              className={chatMode === "successor" ? "mode-btn mode-active" : "mode-btn"}
+              onClick={() => setChatMode("successor")}
+            >
+              弟子 Successor
+            </button>
+          </div>
+
+          <ul className="chat-log">
+            {chatLog.map((entry, i) => (
+              <li key={i}>
+                <p className="chat-you">
+                  <strong>{entry.mode === "customer" ? "客" : "弟子"}:</strong> {entry.message}
+                </p>
+                <p className="chat-reply">{entry.reply}</p>
+              </li>
+            ))}
+          </ul>
+
+          <div className="field-group">
+            <textarea
+              rows={2}
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              placeholder={
+                chatMode === "customer"
+                  ? "例: Hello! Can I order 2 boxes of the kombu tsukudani?"
+                  : "例: How do I know when the kombu is done?"
+              }
+              disabled={chatLoading}
+            />
+          </div>
+          <button onClick={sendChat} disabled={chatLoading} className="btn-primary">
+            {chatLoading ? "…" : "送信 — send"}
+          </button>
+          {chatError && <p className="error-text">{chatError}</p>}
+
+          <h3 className="jp-heading">台帳 Ledger</h3>
+          {ledger.length === 0 ? (
+            <p className="empty-state">まだ注文はありません — no orders yet.</p>
+          ) : (
+            <table className="ledger-table">
+              <thead>
+                <tr>
+                  <th>item</th>
+                  <th>qty</th>
+                  <th>ts</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ledger.map((entry, i) => (
+                  <tr key={i}>
+                    <td>{entry.item}</td>
+                    <td>{entry.qty}</td>
+                    <td>{new Date(entry.ts).toLocaleTimeString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </section>
       </div>
     </main>

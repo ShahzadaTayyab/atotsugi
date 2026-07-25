@@ -195,3 +195,66 @@ textarea {
 .codex-empty {
   opacity: 0.5;
 }
+
+.shop-link {
+  color: var(--kin);
+  font-weight: 600;
+}
+
+.mode-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.mode-btn {
+  background: #fff;
+  border: 1px solid #c9bfa5;
+  border-radius: 4px;
+  padding: 6px 14px;
+  color: var(--ink);
+}
+
+.mode-active {
+  background: var(--indigo);
+  color: var(--washi);
+  border-color: var(--indigo);
+}
+
+.chat-log {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+  max-height: 220px;
+  overflow-y: auto;
+  font-size: 0.85rem;
+}
+
+.chat-log li {
+  padding: 6px 0;
+  border-bottom: 1px solid #d9cfb4;
+}
+
+.chat-you {
+  margin: 0 0 4px;
+}
+
+.chat-reply {
+  margin: 0;
+  white-space: pre-wrap;
+  opacity: 0.9;
+}
+
+.ledger-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin-top: 8px;
+}
+
+.ledger-table th,
+.ledger-table td {
+  text-align: left;
+  padding: 4px 8px;
+  border-bottom: 1px solid #d9cfb4;
+}
